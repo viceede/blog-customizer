@@ -5,6 +5,7 @@ import {
   fontColors,
   type OptionType,
   contentWidthArr,
+  backgroundColors,
 } from '@/constants/articleProps';
 import { clsx } from 'clsx';
 import { useState, useRef, useEffect, type Dispatch, type SetStateAction } from 'react';
@@ -30,6 +31,9 @@ export const ArticleParamsForm = (): React.JSX.Element => {
   const [fontColor, setFontColor] = useState<OptionType>(defaultArticleState.fontColor);
   const [contentWidth, setContentWidth] = useState<OptionType>(
     defaultArticleState.contentWidth
+  );
+  const [backgroundColor, setBackgroundColor] = useState<OptionType>(
+    defaultArticleState.backgroundColor
   );
 
   function createFormHandler<T>(
@@ -97,6 +101,13 @@ export const ArticleParamsForm = (): React.JSX.Element => {
           />
 
           <Separator />
+
+          <Select
+            title="цвет фона"
+            selected={backgroundColor}
+            options={backgroundColors}
+            onChange={createFormHandler<OptionType>(setBackgroundColor)}
+          />
 
           <Select
             title="ширина контента"
