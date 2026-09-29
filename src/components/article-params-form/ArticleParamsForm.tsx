@@ -1,22 +1,97 @@
+import {
+  defaultArticleState,
+  fontFamilyOptions,
+  fontSizeOptions,
+  fontColors,
+  type OptionType,
+  contentWidthArr,
+} from '@/constants/articleProps';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
+import { RadioGroup } from 'src/ui/radio-group';
+import { Select } from 'src/ui/select';
+import { Separator } from 'src/ui/separator';
+import { Text } from 'src/ui/text';
 
 import styles from './ArticleParamsForm.module.scss';
 
+type FormHandlerFunction<T> = (value: T) => void;
+
 export const ArticleParamsForm = (): React.JSX.Element => {
-  const [formState, setFormState] = useState(false);
+  const [asideState, setAsideState] = useState<boolean>(false);
+
+  const [font, setFont] = useState<OptionType>(defaultArticleState.fontFamilyOption);
+  const [fontSize, setFontSize] = useState<OptionType>(
+    defaultArticleState.fontSizeOption
+  );
+  const [fontColor, setFontColor] = useState<OptionType>(defaultArticleState.fontColor);
+  const [contentWidth, setContentWidth] = useState<OptionType>(
+    defaultArticleState.contentWidth
+  );
+
+  function createFormHandler<T>(
+    setState: Dispatch<SetStateAction<T>>
+  ): FormHandlerFunction<T> {
+    const result = (value: T): void => {
+      setState(value);
+    };
+    return result;
+  }
 
   const handleArrowClick = (): void => {
-    setFormState(!formState);
+    setAsideState(!asideState);
   };
 
   return (
     <>
-      <ArrowButton isOpen={formState} onClick={handleArrowClick} />
-      <aside className={clsx(styles.container, formState && styles.container_open)}>
+      <ArrowButton isOpen={asideState} onClick={handleArrowClick} />
+      <aside className={clsx(styles.container, asideState && styles.container_open)}>
         <form className={styles.form}>
+          <Text
+            as="h2"
+            size={31}
+            weight={800}
+            fontStyle="normal"
+            uppercase={true}
+            family="open-sans"
+            dynamicLite
+          >
+            задайте параметры
+          </Text>
+
+          <Select
+            title="шрифт"
+            selected={font}
+            options={fontFamilyOptions}
+            onChange={createFormHandler<OptionType>(setFont)}
+          />
+
+          <RadioGroup
+            title="размер шрифта"
+            options={fontSizeOptions}
+            selected={fontSize}
+            name="font-size"
+            onChange={createFormHandler<OptionType>(setFontSize)}
+          />
+
+          <Select
+            title="цвет шрифта"
+            selected={fontColor}
+            options={fontColors}
+            onChange={createFormHandler<OptionType>(setFontColor)}
+          />
+
+          <Separator />
+
+          <Select
+            title="ширина контента"
+            selected={contentWidth}
+            options={contentWidthArr}
+            onChange={createFormHandler<OptionType>(setContentWidth)}
+          />
+
           <div className={styles.bottomContainer}>
             <Button title="Сбросить" htmlType="reset" type="clear" />
             <Button title="Применить" htmlType="submit" type="apply" />
