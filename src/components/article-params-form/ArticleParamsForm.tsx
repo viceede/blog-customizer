@@ -7,7 +7,7 @@ import {
   contentWidthArr,
 } from '@/constants/articleProps';
 import { clsx } from 'clsx';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { useState, useRef, useEffect, type Dispatch, type SetStateAction } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { RadioGroup } from 'src/ui/radio-group';
@@ -20,7 +20,8 @@ import styles from './ArticleParamsForm.module.scss';
 type FormHandlerFunction<T> = (value: T) => void;
 
 export const ArticleParamsForm = (): React.JSX.Element => {
-  const [asideState, setAsideState] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const paramsFormRef = useRef<HTMLElement | null>(null);
 
   const [font, setFont] = useState<OptionType>(defaultArticleState.fontFamilyOption);
   const [fontSize, setFontSize] = useState<OptionType>(
@@ -40,14 +41,26 @@ export const ArticleParamsForm = (): React.JSX.Element => {
     return result;
   }
 
-  const handleArrowClick = (): void => {
-    setAsideState(!asideState);
-  };
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent): void {
+      if (paramsFormRef.current && !paramsFormRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return (): void => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
 
   return (
     <>
-      <ArrowButton isOpen={asideState} onClick={handleArrowClick} />
-      <aside className={clsx(styles.container, asideState && styles.container_open)}>
+      <ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+      <aside
+        className={clsx(styles.container, isOpen && styles.container_open)}
+        ref={paramsFormRef}
+      >
         <form className={styles.form}>
           <Text
             as="h2"
