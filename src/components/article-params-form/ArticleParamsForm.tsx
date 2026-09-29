@@ -6,6 +6,7 @@ import {
   type OptionType,
   contentWidthArr,
   backgroundColors,
+  type ArticleStateType,
 } from '@/constants/articleProps';
 import { clsx } from 'clsx';
 import { useState, useRef, useEffect, type Dispatch, type SetStateAction } from 'react';
@@ -19,8 +20,11 @@ import { Text } from 'src/ui/text';
 import styles from './ArticleParamsForm.module.scss';
 
 type FormHandlerFunction<T> = (value: T) => void;
+type ArticleParamsFormProps = {
+  onSubmit: (data: ArticleStateType) => void;
+};
 
-export const ArticleParamsForm = (): React.JSX.Element => {
+export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const paramsFormRef = useRef<HTMLElement | null>(null);
 
@@ -56,6 +60,32 @@ export const ArticleParamsForm = (): React.JSX.Element => {
     return (): void => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
+  }, []);
+
+  function onApply(e: SubmitEvent): void {
+    e.preventDefault();
+    props.onSubmit({
+      fontFamilyOption: font,
+      fontColor: fontColor,
+      backgroundColor: backgroundColor,
+      contentWidth: contentWidth,
+      fontSizeOption: fontSize,
+    });
+  }
+
+  function onReset(): void {
+    props.onSubmit(defaultArticleState);
+    setFont(defaultArticleState.fontFamilyOption);
+    setFontSize(defaultArticleState.fontSizeOption);
+    setFontColor(defaultArticleState.fontColor);
+    setContentWidth(defaultArticleState.contentWidth);
+    setBackgroundColor(defaultArticleState.backgroundColor);
+  }
+
+  useEffect(() => {
+    document.addEventListener('submit', onApply);
+
+    return document.removeEventListener('submit', onApply);
   }, []);
 
   return (
@@ -117,8 +147,8 @@ export const ArticleParamsForm = (): React.JSX.Element => {
           />
 
           <div className={styles.bottomContainer}>
-            <Button title="Сбросить" htmlType="reset" type="clear" />
-            <Button title="Применить" htmlType="submit" type="apply" />
+            <Button title="Сбросить" htmlType="reset" type="clear" onClick={onReset} />
+            <Button title="Применить" htmlType="submit" type="apply" onClick={onApply} />
           </div>
         </form>
       </aside>
