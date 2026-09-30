@@ -66,7 +66,8 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
     };
   }, [isSidebarOpen]);
 
-  function onApply(): void {
+  function onApply(e: React.FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
     props.onSubmit({
       fontFamilyOption: font,
       fontColor: fontColor,
@@ -76,17 +77,14 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
     });
   }
 
-  function onReset(): void {
+  function onReset(e: React.FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
     props.onSubmit(defaultArticleState);
     setFont(defaultArticleState.fontFamilyOption);
     setFontSize(defaultArticleState.fontSizeOption);
     setFontColor(defaultArticleState.fontColor);
     setContentWidth(defaultArticleState.contentWidth);
     setBackgroundColor(defaultArticleState.backgroundColor);
-  }
-
-  function preventDefault(e: React.FormEvent<HTMLFormElement>): void {
-    e.preventDefault();
   }
 
   return (
@@ -99,7 +97,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
         className={clsx(styles.container, isSidebarOpen && styles.container_open)}
         ref={paramsFormRef}
       >
-        <form className={styles.form} onSubmit={preventDefault}>
+        <form className={styles.form} onSubmit={onApply} onReset={onReset}>
           <Text
             as="h2"
             size={31}
@@ -150,8 +148,8 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
           />
 
           <div className={styles.bottomContainer}>
-            <Button title="Сбросить" htmlType="reset" type="clear" onClick={onReset} />
-            <Button title="Применить" htmlType="submit" type="apply" onClick={onApply} />
+            <Button title="Сбросить" htmlType="reset" type="clear" />
+            <Button title="Применить" htmlType="submit" type="apply" />
           </div>
         </form>
       </aside>
