@@ -62,8 +62,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
     };
   }, []);
 
-  function onApply(e: React.FormEvent<HTMLFormElement>): void {
-    e.preventDefault();
+  function onApply(): void {
     props.onSubmit({
       fontFamilyOption: font,
       fontColor: fontColor,
@@ -82,6 +81,10 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
     setBackgroundColor(defaultArticleState.backgroundColor);
   }
 
+  function preventDefault(e: React.FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
+  }
+
   return (
     <>
       <ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
@@ -89,7 +92,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
         className={clsx(styles.container, isOpen && styles.container_open)}
         ref={paramsFormRef}
       >
-        <form className={styles.form} onSubmit={onApply}>
+        <form className={styles.form} onSubmit={preventDefault}>
           <Text
             as="h2"
             size={31}
@@ -97,7 +100,6 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
             fontStyle="normal"
             uppercase={true}
             family="open-sans"
-            dynamicLite
           >
             задайте параметры
           </Text>
@@ -142,7 +144,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
 
           <div className={styles.bottomContainer}>
             <Button title="Сбросить" htmlType="reset" type="clear" onClick={onReset} />
-            <Button title="Применить" htmlType="submit" type="apply" />
+            <Button title="Применить" htmlType="submit" type="apply" onClick={onApply} />
           </div>
         </form>
       </aside>
