@@ -62,7 +62,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
     };
   }, []);
 
-  function onApply(e: SubmitEvent): void {
+  function onApply(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     props.onSubmit({
       fontFamilyOption: font,
@@ -82,12 +82,6 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
     setBackgroundColor(defaultArticleState.backgroundColor);
   }
 
-  useEffect(() => {
-    document.addEventListener('submit', onApply);
-
-    return document.removeEventListener('submit', onApply);
-  }, []);
-
   return (
     <>
       <ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
@@ -95,7 +89,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
         className={clsx(styles.container, isOpen && styles.container_open)}
         ref={paramsFormRef}
       >
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={onApply}>
           <Text
             as="h2"
             size={31}
@@ -148,7 +142,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps): React.JSX.Elem
 
           <div className={styles.bottomContainer}>
             <Button title="Сбросить" htmlType="reset" type="clear" onClick={onReset} />
-            <Button title="Применить" htmlType="submit" type="apply" onClick={onApply} />
+            <Button title="Применить" htmlType="submit" type="apply" />
           </div>
         </form>
       </aside>
